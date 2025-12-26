@@ -69,6 +69,7 @@ public class ExportCommand : Command
     {
         Type entityType = typeof(TEntity);
         string tableName = entityType.Name;
+        Console.WriteLine($"Exporting {tableName}");
         string begin = $"BEGIN {tableName}";
         await output.WriteAsync(begin.AsMemory(), cancellationToken);
         await foreach (TEntity entity in reader.ReadAsync(new ReadRequest<TEntity>(), cancellationToken))
