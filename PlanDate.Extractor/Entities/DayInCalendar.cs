@@ -1,6 +1,6 @@
 ﻿namespace PlanDate.Extractor.Entities;
 
-public record CalendarDay : CreatioEntity
+public record DayInCalendar : CreatioEntity
 {
     public Guid? DayTypeId { get; set; }
     

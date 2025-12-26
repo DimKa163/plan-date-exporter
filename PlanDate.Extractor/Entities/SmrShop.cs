@@ -2,7 +2,7 @@
 
 public record SmrShop : CreatioEntity
 {
-    public string SmrNrec { get; set; } = null!;
+    public string SmrFnrec { get; set; } = null!;
 
     public Guid? NrbWarehouseId { get; set; }
 }

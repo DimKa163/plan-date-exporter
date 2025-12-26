@@ -7,16 +7,12 @@ class Program
 {
     static Task<int> Main(string[] args)
     {
-        var option = new Option<string>("--user");
-        var rootCommand = new RootCommand("Extractor")
-        {
-            option
-        };
+        var rootCommand = new RootCommand("exporter");
         rootCommand.Add(new VersionCommand("version"));
+        rootCommand.Add(new ExportCommand("export"));
         rootCommand.SetAction(async (p, ct) =>
         {
-            var user = p.GetValue(option);
-            Console.WriteLine("Hello {0}, Its plan date data extractor", user);
+            Console.WriteLine("Hello {0}, Its plan date data extractor", 0);
         });
 
        return rootCommand.Parse(args).InvokeAsync();
