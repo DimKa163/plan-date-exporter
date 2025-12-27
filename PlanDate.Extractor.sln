@@ -3,6 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlanDate.Extractor", "PlanDate.Extractor\PlanDate.Extractor.csproj", "{770DD6E5-2D86-4FB6-BC3E-88A4CB165D0C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SlnItems", "SlnItems", "{7731C2AC-627A-4DA3-AA07-FD89E23B645B}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlanDate.Extractor.UnitTest", "PlanDate.Extractor.UnitTest\PlanDate.Extractor.UnitTest.csproj", "{7A79F866-16F0-4A61-8ACF-9AC02E587843}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -14,5 +19,9 @@ Global
 		{770DD6E5-2D86-4FB6-BC3E-88A4CB165D0C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{770DD6E5-2D86-4FB6-BC3E-88A4CB165D0C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{770DD6E5-2D86-4FB6-BC3E-88A4CB165D0C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7A79F866-16F0-4A61-8ACF-9AC02E587843}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7A79F866-16F0-4A61-8ACF-9AC02E587843}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7A79F866-16F0-4A61-8ACF-9AC02E587843}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7A79F866-16F0-4A61-8ACF-9AC02E587843}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

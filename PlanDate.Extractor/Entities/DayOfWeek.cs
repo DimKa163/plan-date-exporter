@@ -2,7 +2,7 @@
 
 public record DayOfWeek : CreatioEntity
 {
-    public DayOfWeekNumber Number { get; set; }
+    public int Number { get; set; }
 }
 
 public enum DayOfWeekNumber
