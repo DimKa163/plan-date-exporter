@@ -5,7 +5,7 @@ using PlanDate.Extractor.Entities;
 
 namespace PlanDate.Extractor.Data.MsSql.Requests;
 
-public class ReadRequest<TEntity> : IEntityReaderRequest<TEntity> where TEntity : CreatioEntity
+public class ReadRequest<TEntity> : IEntityReadRequest<TEntity> where TEntity : CreatioEntity
 {
     public IAsyncEnumerable<TEntity> ReadAsync(SqlConnection connection, CancellationToken token = default)
     {

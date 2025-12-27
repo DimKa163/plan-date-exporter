@@ -1,25 +1,32 @@
-﻿namespace PlanDate.Extractor.Entities;
+﻿using System.ComponentModel.DataAnnotations;
+using PlanDate.Extractor.Data;
+
+namespace PlanDate.Extractor.Entities;
 
 public record NrbStandardPurchase : CreatioEntity
 {
     /// <summary>
     /// Идентефикатор поставщика
     /// </summary>
+    [Index(Direction.ASC, false)]
     public Guid? NrbAccountProviderId { get;  set; }
 
     /// <summary>
     /// Интеграционный идентификатор
     /// </summary>
+    [Index(Direction.ASC, false)]
     public Guid? NrbIntegrationId { get; set; }
 
     /// <summary>
     /// Назвние
     /// </summary>
+    [MaxLength(250)]
     public string NrbName { get; set; } = null!;
 
     /// <summary>
     /// Заметки
     /// </summary>
+    [MaxLength(500)]
     public string NrbNotes { get; set; } = null!;
 
     /// <summary>

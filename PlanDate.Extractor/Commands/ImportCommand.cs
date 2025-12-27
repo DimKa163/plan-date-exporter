@@ -4,16 +4,17 @@ using PlanDate.Extractor.Data.MsSql;
 
 namespace PlanDate.Extractor.Commands;
 
-public class ExportCommand : Command
+public class ImportCommand : Command
 {
     private readonly Option<string> _dbOption;
-    private readonly Option<string> _outputOption;
-    public ExportCommand(string name, string? description = null) : base(name, description)
+    private readonly Option<string> _sourceOption;
+    
+    public ImportCommand(string name, string? description = null) : base(name, description)
     {
         _dbOption = new Option<string>("--db");
         Add(_dbOption);
-        _outputOption = new Option<string>("--output");
-        Add(_outputOption);
+        _sourceOption = new Option<string>("--source");
+        Add(_sourceOption);
         SetAction(Execute);
     }
 
@@ -23,11 +24,11 @@ public class ExportCommand : Command
             throw new Exception();
         string? connectionString = parseResult.GetValue(_dbOption);
         
-        string? outputPath = parseResult.GetValue(_outputOption);
+        string? sourcePath = parseResult.GetValue(_sourceOption);
         SqlConnection conn = new SqlConnection(connectionString);
         await conn.OpenAsync(cancellationToken);
-        await using Output output = new Output(outputPath!);
-        Exporter exporter = new(new Executor(conn), output);
-        await exporter.ExportAsync(cancellationToken);
+        await using Input input = new Input(sourcePath!);
+        Importer importer = new(new Executor(conn), input);
+        await importer.ImportAsync(cancellationToken);
     }
 }

@@ -10,6 +10,7 @@ class Program
         var rootCommand = new RootCommand("exporter");
         rootCommand.Add(new VersionCommand("version"));
         rootCommand.Add(new ExportCommand("export"));
+        rootCommand.Add(new ImportCommand("import"));
         rootCommand.SetAction(async (p, ct) =>
         {
             Console.WriteLine("Hello {0}, Its plan date data extractor", 0);

@@ -8,11 +8,11 @@ using PlanDate.Extractor.UnitTest.Infrastructure.Fixture;
 
 namespace PlanDate.Extractor.UnitTest;
 [Collection("mssql")]
-public class ReaderTest
+public class ExecutorTest
 {
     private readonly MsSqlFixture _db;
 
-    public ReaderTest(MsSqlFixture db)
+    public ExecutorTest(MsSqlFixture db)
     {
         _db = db;
     }
@@ -22,10 +22,10 @@ public class ReaderTest
     {
         SqlConnection conn = new SqlConnection(_db.ConnectionString);
         await conn.OpenAsync();
-        Reader reader = new Reader(conn);
+        Executor executor = new Executor(conn);
         var list = new List<Contact>();
 
-        await foreach (var c in reader.ReadAsync(new ReadRequest<Contact>(), CancellationToken.None))
+        await foreach (var c in executor.ReadAsync(new ReadRequest<Contact>(), CancellationToken.None))
         {
             list.Add(c);
         }
@@ -39,7 +39,7 @@ public record Contact : CreatioEntity
     public string Name { get; set; }
 }
 
-public class ContactReaderRequest : IEntityReaderRequest<Contact>
+public class ContactReadRequest : IEntityReadRequest<Contact>
 {
     public IAsyncEnumerable<Contact> ReadAsync(SqlConnection connection, CancellationToken token = default)
     {

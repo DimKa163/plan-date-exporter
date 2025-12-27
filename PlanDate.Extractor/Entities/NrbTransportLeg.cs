@@ -1,17 +1,25 @@
-﻿namespace PlanDate.Extractor.Entities;
+﻿using System.ComponentModel.DataAnnotations;
+using PlanDate.Extractor.Data;
+
+namespace PlanDate.Extractor.Entities;
 
 public record NrbTransportLeg : CreatioEntity
 {
+    [MaxLength(250)]
     public string NrbName { get; set; } = null!;
 
     /// <summary>
     /// Идентефикатор МОЛа откуда
     /// </summary>
+    [Index(Direction.ASC, false)]
+    [Reference(typeof(NrbSubWarehouse), "Id")]
     public Guid? NrbSubWarehouseId { get; set; }
 
     /// <summary>
     /// Идентефикатор МОЛа куда
     /// </summary>
+    [Index(Direction.ASC, false)]
+    [Reference(typeof(NrbSubWarehouse), "Id")]
     public Guid? NrbSubWarehouseWhereId { get; set; }
 
     /// <summary>
@@ -32,6 +40,7 @@ public record NrbTransportLeg : CreatioEntity
     /// <summary>
     /// Идентефикатор дня отсечки
     /// </summary>
+    [Index(Direction.ASC, false)]
     public Guid? NrbCutOffDayId { get; set; }
 
     public bool NrbShipmentMonday { get; set; }
