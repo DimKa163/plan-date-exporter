@@ -1,5 +1,7 @@
 ﻿using System.CommandLine;
+using System.Data.Common;
 using Microsoft.Data.SqlClient;
+using PlanDate.Extractor.Data;
 using PlanDate.Extractor.Data.MsSql;
 
 namespace PlanDate.Extractor.Commands;
@@ -8,6 +10,7 @@ public class ImportCommand : Command
 {
     private readonly Option<string> _dbOption;
     private readonly Option<string> _sourceOption;
+    private readonly Option<DbDriver> _driverOption;
     
     public ImportCommand(string name, string? description = null) : base(name, description)
     {
@@ -15,6 +18,8 @@ public class ImportCommand : Command
         Add(_dbOption);
         _sourceOption = new Option<string>("--source");
         Add(_sourceOption);
+        _driverOption = new Option<DbDriver>("--driver");
+        Add(_driverOption);
         SetAction(Execute);
     }
 
@@ -25,10 +30,13 @@ public class ImportCommand : Command
         string? connectionString = parseResult.GetValue(_dbOption);
         
         string? sourcePath = parseResult.GetValue(_sourceOption);
-        SqlConnection conn = new SqlConnection(connectionString);
+        
+        DbDriver? driver = parseResult.GetValue(_driverOption);
+        
+        DbConnection conn = ImporterFactory.CreateConnection(driver.Value, connectionString! );
         await conn.OpenAsync(cancellationToken);
         await using Input input = new Input(sourcePath!);
-        Importer importer = new(new Executor(conn), input);
+        IImporter importer = ImporterFactory.CreateImporter(driver.Value, new Executor(conn), input);
         await importer.ImportAsync(cancellationToken);
     }
 }

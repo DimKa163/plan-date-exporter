@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.Data.Common;
+using System.Reflection;
 using Dapper;
 using Microsoft.Data.SqlClient;
 using PlanDate.Extractor.Entities;
@@ -7,7 +8,7 @@ namespace PlanDate.Extractor.Data.MsSql.Requests;
 
 public class ReadRequest<TEntity> : IEntityReadRequest<TEntity> where TEntity : CreatioEntity
 {
-    public IAsyncEnumerable<TEntity> ReadAsync(SqlConnection connection, CancellationToken token = default)
+    public IAsyncEnumerable<TEntity> ReadAsync(DbConnection connection, CancellationToken token = default)
     {
         Type entityType = typeof(TEntity);
         string tableName = entityType.Name;

@@ -37,6 +37,7 @@ public class Exporter(Executor executor, Output output)
         await Export<Product>(token);
         await Export<ProductDeficit>(token);
         await Export<SmrShop>(token);
+        await Export<SmrProductGroupFlag>(token);
         await Export<TimeZone>(token);
         await Export<WorkingTimeInterval>(token);
     }

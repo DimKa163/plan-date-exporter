@@ -5,7 +5,7 @@ using PlanDate.Extractor.Entities;
 
 namespace PlanDate.Extractor.Data.MsSql;
 
-public class Importer(Executor executor, Input input)
+public class MsSqlImporter(Executor executor, Input input) : IImporter
 {
     public async Task ImportAsync(CancellationToken ct)
     {

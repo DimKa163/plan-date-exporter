@@ -1,9 +1,8 @@
 ﻿using System.Data.Common;
 using System.Reflection;
 using Dapper;
-using Microsoft.Data.SqlClient;
 
-namespace PlanDate.Extractor.Data.MsSql.Requests;
+namespace PlanDate.Extractor.Data.Npgsql.Requests;
 
 public class CreatePKRequest : IEntityRequest
 {
@@ -16,14 +15,14 @@ public class CreatePKRequest : IEntityRequest
             throw new InvalidOperationException($"There are multiple identity properties with the name {props[0].Name}");
 
         string columnName = props[0].Name;
-        MsSqlColumn? attrColumn = props[0].GetCustomAttribute<MsSqlColumn>();
+        NpgsqlColumn? attrColumn = props[0].GetCustomAttribute<NpgsqlColumn>();
         if (attrColumn is not null)
             columnName = attrColumn.ColumnName;
         string tableName = type.Name;
-        MsSqlTable? attr = type.GetCustomAttribute<MsSqlTable>();
+        NpgsqlTable? attr = type.GetCustomAttribute<NpgsqlTable>();
         if (attr is not null)
             tableName = attr.TableName;
-        string query = $"ALTER TABLE [dbo].[{tableName}] ADD CONSTRAINT [PK_{tableName}] PRIMARY KEY ([{columnName}]);";
+        string query = $"ALTER TABLE public.{tableName} ADD CONSTRAINT PK_{tableName} PRIMARY KEY (\"{columnName}\");";
         return connection.ExecuteAsync(query);
     }
 }

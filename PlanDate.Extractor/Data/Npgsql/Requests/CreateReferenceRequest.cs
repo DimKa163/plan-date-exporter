@@ -1,9 +1,9 @@
 ﻿using System.Data.Common;
 using System.Reflection;
 using Dapper;
-using Microsoft.Data.SqlClient;
+using PlanDate.Extractor.Data.MsSql;
 
-namespace PlanDate.Extractor.Data.MsSql.Requests;
+namespace PlanDate.Extractor.Data.Npgsql.Requests;
 
 public class CreateReferenceRequest : IEntityRequest
 {
@@ -13,7 +13,7 @@ public class CreateReferenceRequest : IEntityRequest
         if (props.Length == 0)
             return Task.CompletedTask;
         string tableName = type.Name;
-        MsSqlTable? table = type.GetCustomAttribute<MsSqlTable>();
+        NpgsqlTable? table = type.GetCustomAttribute<NpgsqlTable>();
         if (table is not null)
             tableName = table.TableName;
         List<string> expressions = new(props.Length);
@@ -22,19 +22,19 @@ public class CreateReferenceRequest : IEntityRequest
             Reference attrRef = prop.GetCustomAttribute<Reference>()!;
             Type dest = attrRef.Type;
             string destName = dest.Name;
-            MsSqlTable? destTable = prop.GetCustomAttribute<MsSqlTable>();
-            if (destTable is not null)
-                destName = dest.Name;
             PropertyInfo identityProp = dest.GetProperties().First(p => p.GetCustomAttribute<Identity>() is not null);
             string identityName = identityProp.Name;
-            MsSqlColumn? identityColumn = identityProp.GetCustomAttribute<MsSqlColumn>();
+            NpgsqlColumn? identityColumn = identityProp.GetCustomAttribute<NpgsqlColumn>();
             if (identityColumn is not null)
                 identityName = identityColumn.ColumnName;
+            NpgsqlTable? destTable = dest.GetCustomAttribute<NpgsqlTable>();
+            if (destTable is not null)
+                destName = destTable.TableName;
             string columnName = prop.Name;
-            MsSqlColumn? column = prop.GetCustomAttribute<MsSqlColumn>();
+            NpgsqlColumn? column = prop.GetCustomAttribute<NpgsqlColumn>();
             if (column is not null)
                 columnName = column.ColumnName;
-            expressions.Add($"ALTER TABLE [dbo].[{tableName}] ADD CONSTRAINT [FK_{tableName}_{columnName}_{destTable}] FOREIGN KEY ([{columnName}])  REFERENCES [dbo].[{destName}]([{identityName}]);");
+            expressions.Add($"ALTER TABLE public.{tableName} ADD CONSTRAINT fk_{tableName}_{columnName}_{destName} FOREIGN KEY (\"{columnName}\")  REFERENCES public.{destName}(\"{identityName}\");");
         }
         string query = string.Join("\n", expressions);
         return connection.ExecuteAsync(query);

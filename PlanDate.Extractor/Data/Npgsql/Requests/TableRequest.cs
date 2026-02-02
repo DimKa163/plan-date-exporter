@@ -3,15 +3,16 @@ using System.Data.Common;
 using System.Reflection;
 using Dapper;
 using Microsoft.Data.SqlClient;
+using Npgsql;
 
-namespace PlanDate.Extractor.Data.MsSql.Requests;
+namespace PlanDate.Extractor.Data.Npgsql.Requests;
 
 public class TableRequest : IEntityRequest
 {
     public Task ExecuteAsync(DbConnection connection, Type type, CancellationToken token = default)
     {
-        string tableName = type.Name;
-        MsSqlTable? attr = type.GetCustomAttribute<MsSqlTable>();
+         string tableName = type.Name;
+         NpgsqlTable? attr = type.GetCustomAttribute<NpgsqlTable>();
         if (attr is not null)
             tableName = attr.TableName;
         PropertyInfo[] props = type
@@ -22,42 +23,42 @@ public class TableRequest : IEntityRequest
         foreach (PropertyInfo prop in props)
         {
             string propName = prop.Name;
-            MsSqlColumn? attrColumn = prop.GetCustomAttribute<MsSqlColumn>();
+            NpgsqlColumn? attrColumn = prop.GetCustomAttribute<NpgsqlColumn>();
             if (attrColumn is not null)
                 propName = attrColumn.ColumnName;
             MaxLengthAttribute? attrLen = prop.GetCustomAttribute<MaxLengthAttribute>();
             switch (prop.PropertyType)
             {
                 case var _ when prop.PropertyType == typeof(Guid):
-                    propExprs.Add($"[{propName}] UNIQUEIDENTIFIER NOT NULL");
+                    propExprs.Add($"{propName} uuid not null");
                     break;
                 case var _ when prop.PropertyType == typeof(Guid?):
-                    propExprs.Add($"[{propName}] UNIQUEIDENTIFIER NULL");
+                    propExprs.Add($"{propName} uuid null");
                     break;
                 case var _ when prop.PropertyType == typeof(DateTime?):
-                    propExprs.Add($"[{propName}] DATETIME2(3) NULL");
+                    propExprs.Add($"{propName} timestamptz null");
                     break;
                 case var _ when prop.PropertyType == typeof(TimeSpan?):
-                    propExprs.Add($"[{propName}] TIME(7) NULL");
+                    propExprs.Add($"{propName} interval  null");
                     break;
                 case var _ when prop.PropertyType == typeof(string) && attrLen is not null:
-                    propExprs.Add($"[{propName}] NVARCHAR({attrLen.Length}) NOT NULL");
+                    propExprs.Add($"{propName} varchar({attrLen.Length}) not null");
                     break;
                 case var _ when prop.PropertyType == typeof(string):
-                    propExprs.Add($"[{propName}] NVARCHAR(MAX) NOT NULL");
+                    propExprs.Add($"{propName} text not null");
                     break;
                 case var _ when prop.PropertyType == typeof(int):
-                    propExprs.Add($"[{propName}] INT NOT NULL");
+                    propExprs.Add($"{propName} integer not null");
                     break;
                 case var _ when prop.PropertyType == typeof(bool):
-                    propExprs.Add($"[{propName}] BIT NOT NULL");
+                    propExprs.Add($"{propName} boolean not null");
                     break;
                 case var _ when prop.PropertyType == typeof(decimal):
-                    propExprs.Add($"[{propName}] DECIMAL(18,3) NOT NULL");
+                    propExprs.Add($"{propName} numeric(18, 2) not null");
                     break;
             }
         }
-        string query = $"CREATE TABLE [dbo].[{tableName}] ({string.Join(", ", propExprs)});";
+        string query = $"CREATE TABLE public.{tableName} ({string.Join(", ", propExprs)});";
         return connection.ExecuteAsync(query);
     }
 }

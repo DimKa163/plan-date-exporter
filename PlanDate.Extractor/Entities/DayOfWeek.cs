@@ -1,7 +1,10 @@
-﻿namespace PlanDate.Extractor.Entities;
+﻿using PlanDate.Extractor.Data.Npgsql;
 
+namespace PlanDate.Extractor.Entities;
+[NpgsqlTable("day_of_week")]
 public record DayOfWeek : CreatioEntity
 {
+    [NpgsqlColumn("number")]
     public int Number { get; set; }
 }
 

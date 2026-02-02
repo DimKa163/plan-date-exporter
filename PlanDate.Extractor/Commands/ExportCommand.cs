@@ -1,5 +1,6 @@
 ﻿using System.CommandLine;
 using Microsoft.Data.SqlClient;
+using PlanDate.Extractor.Data;
 using PlanDate.Extractor.Data.MsSql;
 
 namespace PlanDate.Extractor.Commands;

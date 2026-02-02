@@ -1,8 +1,9 @@
-﻿using Microsoft.Data.SqlClient;
+﻿using System.Data.Common;
+using Microsoft.Data.SqlClient;
 
 namespace PlanDate.Extractor.Data;
 
 public interface IEntityRequest
 {
-    Task ExecuteAsync(SqlConnection connection, Type type, CancellationToken token = default);
+    Task ExecuteAsync(DbConnection connection, Type type, CancellationToken token = default);
 }

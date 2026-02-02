@@ -1,9 +1,8 @@
 ﻿using System.Data.Common;
 using System.Reflection;
 using Dapper;
-using Microsoft.Data.SqlClient;
 
-namespace PlanDate.Extractor.Data.MsSql.Requests;
+namespace PlanDate.Extractor.Data.Npgsql.Requests;
 
 public class ImportRequest : IEntityImportRequest
 {
@@ -11,7 +10,7 @@ public class ImportRequest : IEntityImportRequest
     {
         Type entityType = model.GetType();
         string tableName = entityType.Name;
-        MsSqlTable? table = entityType.GetCustomAttribute<MsSqlTable>();
+        NpgsqlTable? table = entityType.GetCustomAttribute<NpgsqlTable>();
         if (table is not null)
             tableName = table.TableName;
         var properties = entityType.GetProperties();
@@ -20,17 +19,18 @@ public class ImportRequest : IEntityImportRequest
         foreach (PropertyInfo property in properties)
         {
             string columnName = property.Name;
-            MsSqlColumn? col = property.GetCustomAttribute<MsSqlColumn>();
+            NpgsqlColumn? col = property.GetCustomAttribute<NpgsqlColumn>();
             if (col != null)
             {
                 columnName = col.ColumnName;
             }
-            columns.Add($"[{columnName}]");
-            columnVal.Add($"@{columnName}");
+            columns.Add($"{columnName}");
+            columnVal.Add($"@{property.Name}");
         }
-        
-        await connection.ExecuteAsync(
-            $"INSERT INTO [dbo].[{tableName}] ({string.Join(", ", columns)}) VALUES ({string.Join(", ", columnVal)})", 
+
+        string query =
+            $"INSERT INTO public.{tableName} ({string.Join(", ", columns)}) VALUES ({string.Join(", ", columnVal)})";
+        await connection.ExecuteAsync(query, 
             model);
     }
 }

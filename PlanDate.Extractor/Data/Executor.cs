@@ -1,10 +1,11 @@
 ﻿using System.Data;
+using System.Data.Common;
 using Microsoft.Data.SqlClient;
 using PlanDate.Extractor.Entities;
 
-namespace PlanDate.Extractor.Data.MsSql;
+namespace PlanDate.Extractor.Data;
 
-public class Executor(SqlConnection connection)
+public class Executor(DbConnection connection)
 {
     public IAsyncEnumerable<TEntity> ReadAsync<TEntity>(IEntityReadRequest<TEntity> request, CancellationToken token = default)
         where TEntity : CreatioEntity
@@ -15,6 +16,13 @@ public class Executor(SqlConnection connection)
     }
 
     public Task ExecuteAsync(IEntityImportRequest request, object model, CancellationToken token = default)
+    {
+        if (connection.State != ConnectionState.Open)
+            throw new InvalidOperationException("The connection should be opened");
+        return request.ImportAsync(connection, model, token);
+    }
+    
+    public Task ExecuteAsync(IMultipleEntityImportRequest request, IEnumerable<object> model, CancellationToken token = default)
     {
         if (connection.State != ConnectionState.Open)
             throw new InvalidOperationException("The connection should be opened");

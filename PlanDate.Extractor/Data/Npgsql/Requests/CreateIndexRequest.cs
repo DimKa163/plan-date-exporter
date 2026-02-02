@@ -1,9 +1,8 @@
 ﻿using System.Data.Common;
 using System.Reflection;
 using Dapper;
-using Microsoft.Data.SqlClient;
 
-namespace PlanDate.Extractor.Data.MsSql.Requests;
+namespace PlanDate.Extractor.Data.Npgsql.Requests;
 
 public class CreateIndexRequest : IEntityRequest
 {
@@ -15,7 +14,7 @@ public class CreateIndexRequest : IEntityRequest
         if (props.Length == 0)
             return Task.CompletedTask;
         string tableName = type.Name;
-        MsSqlTable? table = type.GetCustomAttribute<MsSqlTable>();
+        NpgsqlTable? table = type.GetCustomAttribute<NpgsqlTable>();
         if (table is not null)
             tableName = table.TableName;
         List<string> expressions = new(props.Length);
@@ -23,12 +22,12 @@ public class CreateIndexRequest : IEntityRequest
         {
             IndexAttribute attr = prop.GetCustomAttribute<IndexAttribute>()!;
             string columnName = prop.Name;
-            MsSqlColumn? column = prop.GetCustomAttribute<MsSqlColumn>();
+            NpgsqlColumn? column = prop.GetCustomAttribute<NpgsqlColumn>();
             if (column is not null)
                 columnName = column.ColumnName;
             string prf = attr.Unique ? "UX" : "IX";
             string indexExpr = attr.Unique ? "UNIQUE INDEX" : "INDEX";
-            expressions.Add($"CREATE {indexExpr} [{prf}_{columnName}] ON [dbo].[{tableName}]([{columnName}] {attr.Direction});");
+            expressions.Add($"CREATE {indexExpr} {prf}_{tableName}_{columnName} ON public.{tableName}(\"{columnName}\" {attr.Direction});");
         }
         
         string query = string.Join("\n", expressions);

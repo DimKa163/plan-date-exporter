@@ -1,4 +1,5 @@
-﻿using Dapper;
+﻿using System.Data.Common;
+using Dapper;
 using Microsoft.Data.SqlClient;
 using PlanDate.Extractor.Data;
 using PlanDate.Extractor.Data.MsSql;
@@ -41,7 +42,7 @@ public record Contact : CreatioEntity
 
 public class ContactReadRequest : IEntityReadRequest<Contact>
 {
-    public IAsyncEnumerable<Contact> ReadAsync(SqlConnection connection, CancellationToken token = default)
+    public IAsyncEnumerable<Contact> ReadAsync(DbConnection connection, CancellationToken token = default)
     {
         return connection.QueryUnbufferedAsync<Contact>("SELECT Id, Name FROM [Contact]");
     }
